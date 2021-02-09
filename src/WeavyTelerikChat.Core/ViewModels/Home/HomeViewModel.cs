@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
-using MvvmCross.ViewModels;
 using Newtonsoft.Json;
 using Telerik.XamarinForms.DataControls.ListView.Commands;
 using WeavyTelerikChat.Core.Models;

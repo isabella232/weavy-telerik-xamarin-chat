@@ -7,50 +7,25 @@
     xmlns:local="clr-namespace:WeavyTelerikChat.UI.Pages"
     x:Class="WeavyTelerikChat.UI.Pages.NewConversationPage"
     xmlns:viewModels="clr-namespace:WeavyTelerikChat.Core.ViewModels.Conversation;assembly=WeavyTelerikChat.Core"
-    
+    xmlns:telerikInput="clr-namespace:Telerik.XamarinForms.Input;assembly=Telerik.XamarinForms.Input"    
     xmlns:ListCollection="clr-namespace:System.Collections.Generic;assembly=netstandard"
     xmlns:localviews="clr-namespace:WeavyTelerikChat.UI.Views"
                       Title="New Conversation">
 
     <StackLayout Padding="10">
         <Label Text="Add participant(s)"></Label>
-        <!--<autocomplete:SfAutoComplete 
-            x:Name="autoComplete"
-                DataSource="{Binding ResultList}"
-                HeightRequest="40"
-                AutoCompleteMode="Suggest"
-                MultiSelectMode="Token" 
-                TokensWrapMode="None" 
-                IsSelectedItemsVisibleInDropDown="false"                
-                SuggestionMode="StartsWith"
-                NoResultsFoundText="No Results Found"
-                DisplayMemberPath="Name" 
-                MaximumSuggestion="10"
-                ValueChanged="autoComplete_ValueChanged"
-                TextHighlightMode="FirstOccurrence"
-                HighlightedTextColor="Red"
-                HighlightedTextFontAttributes="Bold"
-                SelectedItem="{Binding SelectedUsers}"
-            >
-            <autocomplete:SfAutoComplete.TokenSettings>
-                <autocomplete:TokenSettings
-                        FontSize="15"
-                        BackgroundColor="#ccc"
-                        TextColor="#000" 
-                        SelectedBackgroundColor="#ffffe0"
-                        DeleteButtonColor="Red"
-                        DeleteButtonPlacement="Right"
-                        IsCloseButtonVisible="true"
-                        CornerRadius="5"/>
-            </autocomplete:SfAutoComplete.TokenSettings>
-            <autocomplete:SfAutoComplete.ItemTemplate>
-                <DataTemplate>
-                    <StackLayout Orientation="Horizontal" Padding="2">                                                
-                        <Label Text="{Binding Name}" FontSize="13" LineBreakMode="TailTruncation" />
-                    </StackLayout>
-                </DataTemplate>
-            </autocomplete:SfAutoComplete.ItemTemplate>
-        </autocomplete:SfAutoComplete>-->
+        
+        <telerikInput:RadAutoCompleteView
+            x:Name="autoCompleteView" 
+            ItemsSource="{Binding ResultList}"
+            TextChanged="autoCompleteView_TextChanged"
+            Watermark="Search here..."
+            CompletionMode="Contains"
+            SearchThreshold="2"
+            Tokens="{Binding TokenList}"
+            TextSearchPath="Name"
+            DisplayMode="Tokens">          
+        </telerikInput:RadAutoCompleteView>     
         <Button Text="Add Conversation" Command="{Binding AddConversationCommand}"></Button>
     </StackLayout>
 </views:MvxContentPage>

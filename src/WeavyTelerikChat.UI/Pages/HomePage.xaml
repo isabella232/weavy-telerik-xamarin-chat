@@ -29,10 +29,7 @@
                 >
                 <telerikDataControls:RadListView.Commands>
                     <telerikListViewCommands:ListViewUserCommand Id="ItemTap" Command="{Binding TappedCommand}" />
-                </telerikDataControls:RadListView.Commands>
-                <!--<telerikDataControls:RadListView.BindingContext>
-                    <local:ViewModel />
-                </telerikDataControls:RadListView.BindingContext>-->
+                </telerikDataControls:RadListView.Commands>                
                 <telerikDataControls:RadListView.ItemTemplate>
                     <DataTemplate>
                         <telerikListView:ListViewTemplateCell>
@@ -42,49 +39,7 @@
                         </telerikListView:ListViewTemplateCell>
                     </DataTemplate>
                 </telerikDataControls:RadListView.ItemTemplate>
-            </telerikDataControls:RadListView>
-            <!--<pulltoRefresh:SfPullToRefresh x:Name="pullToRefresh"
-                                    IsRefreshing="{Binding IsBusy}" 
-                                    PullingThreshold="100"
-                                    RefreshContentHeight="30"                                    
-                                    ProgressStrokeColor="#000000"                                    
-                                    RefreshContentThreshold="30"
-                                    RefreshContentWidth="30"
-                                            RefreshCommand="{Binding RefreshConversationsCommand}"
-                                           VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
-                                    >
-                <pulltoRefresh:SfPullToRefresh.PullableContent>
-                    <StackLayout>
-                        <Label IsVisible="{Binding IsEmpty}" Padding="40" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Text="No conversations found. Create a new one or refresh list."></Label>
-                        <syncfusion:SfListView 
-                    x:Name="ConversationListView" 
-                    ItemsSource="{Binding List}"
-                    VerticalOptions="FillAndExpand"                 
-                    SelectedItem="{mvx:MvxBind ItemSelected}"
-                    SelectionMode="Single"            
-                    SelectionGesture="Tap"
-                    TapCommand="{Binding TappedCommand}"
-                    ItemSize="80"
-                    Margin="0,0,0,0">
-                            <syncfusion:SfListView.DataSource>
-                                <data:DataSource LiveDataUpdateMode="AllowDataShaping">
-                                    <data:DataSource.SortDescriptors>
-                                        <data:SortDescriptor PropertyName="LastMessageAt" Direction="Descending"/>
-                                    </data:DataSource.SortDescriptors>
-                                </data:DataSource>
-                            </syncfusion:SfListView.DataSource>
-                            <syncfusion:SfListView.ItemTemplate>
-                                <DataTemplate>
-                                    <ViewCell>
-                                        <localviews:ConversationCell/>
-                                    </ViewCell>
-                                </DataTemplate>
-                            </syncfusion:SfListView.ItemTemplate>
-                        </syncfusion:SfListView>
-                    </StackLayout>
-                    
-                </pulltoRefresh:SfPullToRefresh.PullableContent>
-            </pulltoRefresh:SfPullToRefresh>-->       
+            </telerikDataControls:RadListView>            
         </StackLayout>
     </ContentPage.Content>
 </views:MvxContentPage>

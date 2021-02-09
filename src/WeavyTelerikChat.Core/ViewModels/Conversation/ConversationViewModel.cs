@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -45,8 +44,6 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
             SendMessageCommand = new Command(execute: async (args) => {
                 var message = (string)args;                
                 await SendMessage(message);
-
-            //    MessagingCenter.Send<GenericMessageSender>(GenericMessageSender.Instance, "CLEAR_EDITOR");
             },
             canExecute: (args) =>
             {

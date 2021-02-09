@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MvvmCross.Navigation;
 using WeavyTelerikChat.Core.Models;
@@ -23,6 +21,13 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
         {
             get => _resultList;
             set => SetProperty(ref _resultList, value);
+        }
+
+        private ObservableCollection<object> _tokenList;
+        public ObservableCollection<object> TokenList
+        {
+            get => _tokenList;
+            set => SetProperty(ref _tokenList, value);
         }
 
 
@@ -60,7 +65,7 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
                 _isAdding = true;                
                 var conversation = await _conversationService.Create(new CreateConversationModel {
                     Name = _roomName,
-                    Members = _selectedUsers.Select(x => ((UserResultModel)x).Id).ToList()                    
+                    Members = _tokenList.Select(x => ((UserResultModel)x).Id).ToList()                    
                 });
 
                 if(conversation != null)

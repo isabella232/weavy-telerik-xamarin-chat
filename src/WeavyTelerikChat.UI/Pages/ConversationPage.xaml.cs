@@ -12,13 +12,6 @@ namespace WeavyTelerikChat.UI.Pages
         public ConversationPage()
         {
             InitializeComponent();
-
-            MessagingCenter.Subscribe<GenericMessageSender>(this, "CLEAR_EDITOR", (obj) =>
-            {
-                //sfChat.Editor.Text = string.Empty;
-            });
-        }
-
-        
+        }        
     }
 }
