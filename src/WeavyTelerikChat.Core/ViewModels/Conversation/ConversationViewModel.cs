@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Microsoft.AspNet.SignalR.Client;
 using MvvmCross.Navigation;
 using Newtonsoft.Json;
+using Telerik.XamarinForms.ConversationalUI;
 using WeavyTelerikChat.Core.Models;
 using WeavyTelerikChat.Core.Services;
 using WeavyTelerikChat.Core.ViewModels.Conversation;
@@ -30,8 +31,10 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
             _conversationService = conversationService;
             _hubService = hubService;
             Messages = new ObservableCollection<object>();
+            TypingParticipants = new ObservableCollection<Author>();
 
-            LoadMoreCommand = new Command<object>(execute: (o) => {
+            LoadMoreCommand = new Command<object>(execute: (o) =>
+            {
                 Task.Run(async () => await LoadMessages(clear: false, skip: _skip)).Wait();
             },
             canExecute: (o) =>
@@ -39,32 +42,27 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
                 return _canLoadMore;
             });
 
-            //SendMessageCommand = new Command(execute: async (args) => {
-            //    var arguments = (args as SendMessageEventArgs);                
-
-            //    // the message is inserted from the signalr realtime hub, so we can set handled to true here.
-            //    arguments.Handled = true;
-                
-            //    await SendMessage(arguments);
+            SendMessageCommand = new Command(execute: async (args) => {
+                var message = (string)args;                
+                await SendMessage(message);
 
             //    MessagingCenter.Send<GenericMessageSender>(GenericMessageSender.Instance, "CLEAR_EDITOR");
-            //},
-            //canExecute: (args) =>
-            //{
-            //    return true;
-            //});            
+            },
+            canExecute: (args) =>
+            {
+                return true;
+            });            
         }
 
-        //private async Task SendMessage(SendMessageEventArgs arguments)
-        //{
-        //    var message = arguments.Message;
-        //    await _conversationService.SendMessage(Id, message.Text);
-        //}
+        private async Task SendMessage(string message)
+        {            
+            await _conversationService.SendMessage(Id, message);
+        }
 
         public override void Prepare(ConversationItem conversation)
         {
             _currentConversation = conversation;
-            //_currentUser = new Author { Name = Constants.Me.Profile.Name, Avatar = Constants.Me.ThumbUrlFull };
+            _currentUser = new Author { Name = Constants.Me.Profile.Name, Avatar = Constants.Me.ThumbUrlFull };
             _skip = 0;
 
             Id = _currentConversation.Id;
@@ -74,50 +72,19 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
             Task.Run(async () => await _conversationService.MarkAsRead(Id)).Wait();
         }
 
-        //private List<IMessage> CreateTeleikMessages(Models.Message message)
-        //{
+        private List<TextMessage> CreateTelerikMessages(Models.Message message)
+        {
 
-        //    var author = (message.CreatedBy?.Id == Constants.Me.Id) ? _currentUser : new Author { Name = message.CreatedBy?.Name, Avatar = message.CreatedBy.ThumbUrlFull };
-        //    var messages = new List<IMessage>();
+            var author = (message.CreatedBy?.Id == Constants.Me.Id) ? _currentUser : new Author { Name = message.CreatedBy?.Name, Avatar = message.CreatedBy.ThumbUrlFull };
+            var messages = new List<TextMessage>();
 
-        //    if (message.Attachments.Any())
-        //    {
-        //        // create the first image message
-        //        messages.Add(new ImageMessage()
-        //        {
-        //            Text = message.Text,
-        //            Source = $"{Constants.RootUrl}/attachments/{message.Attachments.First().ToString()}/attachment-512.png",
-        //            DateTime = message.CreatedAt,
-        //            Author = author,
-        //        });
-
-
-        //        // if more attachments, create the image messages
-        //        if(message.Attachments.Count > 1)
-        //        {
-        //            foreach (var attachment in message.Attachments.Skip(1))
-        //            {
-        //                messages.Add(new ImageMessage()
-        //                {
-        //                    Text = "",
-        //                    Source = $"{Constants.RootUrl}/attachments/{attachment}/attachment-512.png",
-        //                    DateTime = message.CreatedAt,
-        //                    Author = author,
-        //                });
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        messages.Add(new TextMessage
-        //        {
-        //            Text = message.Text,
-        //            DateTime = message.CreatedAt,
-        //            Author = author
-        //        });
-        //    }
-        //    return messages;
-        //}
+            messages.Add(new TextMessage
+            {
+                Text = message.Text,               
+                Author = author
+            });
+            return messages;
+        }
 
         public override void ViewAppeared()
         {
@@ -133,32 +100,31 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
                         var typing = JsonConvert.DeserializeObject<SignalrTyping>(data);
                         if (typing.Conversation.Equals(Id) && typing.User.Id != Constants.Me.Id)
                         {
-                            //TypingIndicator = new ChatTypingIndicator();
-                            //TypingIndicator.Authors.Add(new Author() { Name = typing.User.Name });
-                            //TypingIndicator.AvatarViewType = AvatarViewType.Text;
-                            //TypingIndicator.Text = $"{typing.User.Name} is typing...";
-                            //ShowTypingIndicator = true;
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                TypingParticipants.Add(new Author() { Name = typing.User.Name });
+                            });
 
                             Task.Factory.StartNew(() =>
-                            {
-                                Thread.Sleep(4000);
-                                ShowTypingIndicator = false;
-                            });
+                        {
+                            Thread.Sleep(4000);
+                            TypingParticipants.Clear();
+                        });
                         }
                         break;
                     case "message-inserted.weavy":
                         var message = JsonConvert.DeserializeObject<SignalrMessage>(data);
-                        if (message.Conversation.Equals(Id))
+                        if (message.Conversation.Equals(Id) && message.CreatedBy.Id != Constants.Me.Id)
                         {
                             Device.BeginInvokeOnMainThread(() =>
                             {
-                                ShowTypingIndicator = false;
-                                //var addedMessages = CreateTeleikMessages(message);
-                                //addedMessages.Reverse();
-                                //foreach (var addedMessage in addedMessages)
-                                //{
-                                //    Messages.Add(addedMessage);
-                                //}
+                                TypingParticipants.Clear();
+                                var addedMessages = CreateTelerikMessages(message);
+                                addedMessages.Reverse();
+                                foreach (var addedMessage in addedMessages)
+                                {
+                                    Messages.Add(addedMessage);
+                                }
 
                                 if (_isVisible)
                                 {
@@ -192,12 +158,12 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
             set => SetProperty(ref _messages, value);
         }
 
-        //private Author _currentUser;
-        //public Author CurrentUser
-        //{
-        //    get => _currentUser;
-        //    set => SetProperty(ref _currentUser, value);
-        //}
+        private Author _currentUser;
+        public Author CurrentUser
+        {
+            get => _currentUser;
+            set => SetProperty(ref _currentUser, value);
+        }
 
         private int _id;
         public int Id
@@ -214,25 +180,18 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
             set => SetProperty(ref _title, value);
         }
 
-        private bool _showTypingIndicator;
-        public bool ShowTypingIndicator
+        private ObservableCollection<Author> _typingParticipants;
+        public ObservableCollection<Author> TypingParticipants
         {
-            get => _showTypingIndicator;
-            set => SetProperty(ref _showTypingIndicator, value);
+            get => _typingParticipants;
+            set => SetProperty(ref _typingParticipants, value);
         }
-
-        //private ChatTypingIndicator _typingIndicator;
-        //public ChatTypingIndicator TypingIndicator
-        //{
-        //    get => _typingIndicator;
-        //    set => SetProperty(ref _typingIndicator, value);
-        //}
 
         private ICommand _sendMessageCommand;
         public ICommand SendMessageCommand
         {
             get => _sendMessageCommand;
-            set => SetProperty(ref _sendMessageCommand, value);            
+            set => SetProperty(ref _sendMessageCommand, value);
         }
 
         private ICommand _loadMoreCommand;
@@ -259,24 +218,24 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
 
                 var messages = await _conversationService.GetMessages(Id, top, skip);
 
-                if(messages != null && messages.Data != null)
+                if (messages != null && messages.Data != null)
                 {
-                    foreach (var message in messages.Data.Reverse())
+                    foreach (var message in messages.Data)
                     {
                         var isByMe = message.CreatedBy?.Id == Constants.Me.Id;
-                        //var newMessages = CreateSyncfusionMessages(message);
+                        var newMessages = CreateTelerikMessages(message);
 
-                        //foreach (var addedMessage in newMessages)
-                        //{
-                        //    if (addBefore)
-                        //    {
-                        //        Messages.Insert(0, addedMessage);
-                        //    }
-                        //    else
-                        //    {
-                        //        Messages.Add(addedMessage);
-                        //    }
-                        //}
+                        foreach (var addedMessage in newMessages)
+                        {
+                            if (addBefore)
+                            {
+                                Messages.Insert(0, addedMessage);
+                            }
+                            else
+                            {
+                                Messages.Add(addedMessage);
+                            }
+                        }
                     }
 
                     _skip += top;
@@ -294,8 +253,8 @@ namespace WeavyTelerikChat.Core.ViewModels.Conversation
             finally
             {
                 IsBusy = false;
-            }         
+            }
         }
     }
-   
+
 }

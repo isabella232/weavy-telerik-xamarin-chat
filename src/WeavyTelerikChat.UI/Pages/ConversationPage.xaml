@@ -6,42 +6,28 @@
     xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"
     xmlns:local="clr-namespace:WeavyTelerikChat.UI.Pages"    
     x:Class="WeavyTelerikChat.UI.Pages.ConversationPage"
+    xmlns:telerikConversationalUI="clr-namespace:Telerik.XamarinForms.ConversationalUI;assembly=Telerik.XamarinForms.ConversationalUI"
     xmlns:viewModels="clr-namespace:WeavyTelerikChat.Core.ViewModels.Conversation;assembly=WeavyTelerikChat.Core"
     xmlns:localviews="clr-namespace:WeavyTelerikChat.UI.Views"
                       Title="{Binding Title}">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <!--<Style TargetType="sfChat:ChatImageView">
-                <Setter Property="ControlTemplate">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <localviews:ImageContainer/>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            
-            <Style TargetType="sfChat:IncomingMessageAvatarView">
-                <Setter Property="ControlTemplate">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <localviews:AvatarContainer/>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="sfChat:OutgoingMessageAvatarView">
-                <Setter Property="ControlTemplate">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <localviews:AvatarContainer/>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>-->
-        </ResourceDictionary>
-    </ContentPage.Resources>
+
+    <telerikConversationalUI:RadChat 
+        x:Name="chat" 
+        VerticalOptions="FillAndExpand"
+        Author="{Binding CurrentUser}"
+        ItemsSource="{Binding Messages}" 
+        SendMessageCommand="{Binding SendMessageCommand}"
+        >
+
+        <telerikConversationalUI:RadChat.TypingIndicator>
+            <telerikConversationalUI:TypingIndicator 
+                x:Name="typingIndicator" 
+                ItemsSource="{Binding TypingParticipants}"
+                />
+        </telerikConversationalUI:RadChat.TypingIndicator>
+    </telerikConversationalUI:RadChat>
+    
     <!--<sfChat:SfChat 
         x:Name="sfChat" 
         Messages="{Binding Messages}"
