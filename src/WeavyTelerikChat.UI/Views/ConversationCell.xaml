@@ -7,8 +7,7 @@
              x:Class="WeavyTelerikChat.UI.Views.ConversationCell">
     <ContentView.Resources>
         <ResourceDictionary>
-            <converter:RelativeDateTimeConverter x:Key="RelativeDateTimeConverter" />
-            <converter:BadgeConverter x:Key="BadgeConverter" />
+            <converter:RelativeDateTimeConverter x:Key="RelativeDateTimeConverter" />            
             <converter:InverseBoolConverter x:Key="InverseBoolConverter" />
         </ResourceDictionary>
     </ContentView.Resources>
