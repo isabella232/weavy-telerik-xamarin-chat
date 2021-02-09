@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:MvxContentPage x:TypeArguments="viewModels:HomeViewModel"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:MvvmCross.Forms.Views;assembly=MvvmCross.Forms"
+    xmlns:mvx="clr-namespace:MvvmCross.Forms.Bindings;assembly=MvvmCross.Forms"    
+    xmlns:local="clr-namespace:WeavyTelerikChat.UI.Pages"
+    xmlns:localviews="clr-namespace:WeavyTelerikChat.UI.Views"
+    xmlns:telerikDataControls="clr-namespace:Telerik.XamarinForms.DataControls;assembly=Telerik.XamarinForms.DataControls"
+    xmlns:telerikListView="clr-namespace:Telerik.XamarinForms.DataControls.ListView;assembly=Telerik.XamarinForms.DataControls"
+    xmlns:telerikListViewCommands="clr-namespace:Telerik.XamarinForms.DataControls.ListView.Commands;assembly=Telerik.XamarinForms.DataControls"
+    x:Class="WeavyTelerikChat.UI.Pages.HomePage"
+    xmlns:viewModels="clr-namespace:WeavyTelerikChat.Core.ViewModels.Home;assembly=WeavyTelerikChat.Core"
+                      Title="Messenger">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="New"                 
+                 Order="Primary"
+                 Priority="0" 
+                     Command="{Binding NewConversationCommand}"/>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand">
+
+            <telerikDataControls:RadListView 
+                x:Name="listView" 
+                ItemsSource="{Binding List}"
+                SelectionMode="Single"    
+                SelectedItem="{mvx:MvxBind ItemSelected}"                
+                >
+                <telerikDataControls:RadListView.Commands>
+                    <telerikListViewCommands:ListViewUserCommand Id="ItemTap" Command="{Binding TappedCommand}" />
+                </telerikDataControls:RadListView.Commands>
+                <!--<telerikDataControls:RadListView.BindingContext>
+                    <local:ViewModel />
+                </telerikDataControls:RadListView.BindingContext>-->
+                <telerikDataControls:RadListView.ItemTemplate>
+                    <DataTemplate>
+                        <telerikListView:ListViewTemplateCell>
+                            <telerikListView:ListViewTemplateCell.View>
+                                <localviews:ConversationCell/>
+                            </telerikListView:ListViewTemplateCell.View>
+                        </telerikListView:ListViewTemplateCell>
+                    </DataTemplate>
+                </telerikDataControls:RadListView.ItemTemplate>
+            </telerikDataControls:RadListView>
+            <!--<pulltoRefresh:SfPullToRefresh x:Name="pullToRefresh"
+                                    IsRefreshing="{Binding IsBusy}" 
+                                    PullingThreshold="100"
+                                    RefreshContentHeight="30"                                    
+                                    ProgressStrokeColor="#000000"                                    
+                                    RefreshContentThreshold="30"
+                                    RefreshContentWidth="30"
+                                            RefreshCommand="{Binding RefreshConversationsCommand}"
+                                           VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
+                                    >
+                <pulltoRefresh:SfPullToRefresh.PullableContent>
+                    <StackLayout>
+                        <Label IsVisible="{Binding IsEmpty}" Padding="40" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Text="No conversations found. Create a new one or refresh list."></Label>
+                        <syncfusion:SfListView 
+                    x:Name="ConversationListView" 
+                    ItemsSource="{Binding List}"
+                    VerticalOptions="FillAndExpand"                 
+                    SelectedItem="{mvx:MvxBind ItemSelected}"
+                    SelectionMode="Single"            
+                    SelectionGesture="Tap"
+                    TapCommand="{Binding TappedCommand}"
+                    ItemSize="80"
+                    Margin="0,0,0,0">
+                            <syncfusion:SfListView.DataSource>
+                                <data:DataSource LiveDataUpdateMode="AllowDataShaping">
+                                    <data:DataSource.SortDescriptors>
+                                        <data:SortDescriptor PropertyName="LastMessageAt" Direction="Descending"/>
+                                    </data:DataSource.SortDescriptors>
+                                </data:DataSource>
+                            </syncfusion:SfListView.DataSource>
+                            <syncfusion:SfListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <localviews:ConversationCell/>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </syncfusion:SfListView.ItemTemplate>
+                        </syncfusion:SfListView>
+                    </StackLayout>
+                    
+                </pulltoRefresh:SfPullToRefresh.PullableContent>
+            </pulltoRefresh:SfPullToRefresh>-->       
+        </StackLayout>
+    </ContentPage.Content>
+</views:MvxContentPage>
